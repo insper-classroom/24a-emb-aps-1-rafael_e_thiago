@@ -8,13 +8,13 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 
-const int RED_BTN_PIN = 10;
-const int BLUE_BTN_PIN = 11;
-const int GREEN_BTN_PIN = 12;
-const int YELLOW_BTN_PIN = 13;
+const int RED_BTN_PIN = 19;
+const int BLUE_BTN_PIN = 18;
+const int GREEN_BTN_PIN = 20;
+const int YELLOW_BTN_PIN = 21;
 
-const int RED_LED_PIN = 10;
-const int BLUE_LED_PIN = 11;
+const int RED_LED_PIN = 11;
+const int BLUE_LED_PIN = 10;
 const int GREEN_LED_PIN = 12;
 const int YELLOW_LED_PIN = 13;
 
