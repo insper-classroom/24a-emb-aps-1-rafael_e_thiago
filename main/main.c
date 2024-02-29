@@ -8,15 +8,15 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 
-const int RED_BTN_PIN = 19;
 const int BLUE_BTN_PIN = 18;
+const int RED_BTN_PIN = 19;
 const int GREEN_BTN_PIN = 20;
 const int YELLOW_BTN_PIN = 21;
 
-const int RED_LED_PIN = 11;
-const int BLUE_LED_PIN = 10;
-const int GREEN_LED_PIN = 12;
-const int YELLOW_LED_PIN = 13;
+const int BLUE_LED_PIN = 13;
+const int RED_LED_PIN = 12;
+const int GREEN_LED_PIN = 11;
+const int YELLOW_LED_PIN = 10;
 
 const int BUZZ_PIN1 = 0;
 const int BUZZ_PIN2 = 1;
@@ -30,11 +30,11 @@ void btn_callback(uint gpio, uint32_t events) {
     if (events == 0x4) {
         if (gpio == RED_BTN_PIN) {
             red_flag = 1;
-        } else if (gpio == BLUE_LED_PIN) {
+        } if (gpio == BLUE_BTN_PIN) {
             blue_flag = 1;
-        } else if (gpio == GREEN_LED_PIN) {
+        } if (gpio == GREEN_BTN_PIN) {
             green_flag = 1;
-        } else if (gpio == YELLOW_LED_PIN) {
+        } if (gpio == YELLOW_BTN_PIN) {
             yellow_flag = 1;
         }
     }
