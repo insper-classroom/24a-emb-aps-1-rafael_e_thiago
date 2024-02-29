@@ -83,19 +83,21 @@ int main() {
     gpio_set_irq_enabled(YELLOW_BTN_PIN, GPIO_IRQ_EDGE_FALL, true);
 
     while (true) {
-        // if (red_flag) {
-        //     red_flag = 0;
-        //     gpio_put(RED_LED_PIN, !gpio_get(RED_LED_PIN));
-        // }
-        gpio_put(RED_LED_PIN, 1);
-        gpio_put(BLUE_LED_PIN, 1);
-        gpio_put(GREEN_LED_PIN, 1);
-        gpio_put(YELLOW_LED_PIN, 1);
-        sleep_ms(500);
-        gpio_put(RED_LED_PIN, 0);
-        gpio_put(BLUE_LED_PIN, 0);
-        gpio_put(GREEN_LED_PIN, 0);
-        gpio_put(YELLOW_LED_PIN, 0);
-        sleep_ms(500);
+        if (red_flag) {
+            red_flag = 0;
+            gpio_put(RED_LED_PIN, !gpio_get(RED_LED_PIN));
+        }
+        if (blue_flag) {
+            blue_flag = 0;
+            gpio_put(BLUE_LED_PIN, !gpio_get(BLUE_LED_PIN));
+        }
+        if (green_flag) {
+            green_flag = 0;
+            gpio_put(GREEN_LED_PIN, !gpio_get(GREEN_LED_PIN));
+        }
+        if (yellow_flag) {
+            yellow_flag = 0;
+            gpio_put(YELLOW_LED_PIN, !gpio_get(YELLOW_LED_PIN));
+        }
     }
 }
