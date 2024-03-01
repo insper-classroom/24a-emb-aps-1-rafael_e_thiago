@@ -82,22 +82,41 @@ int main() {
     gpio_set_irq_enabled(GREEN_BTN_PIN, GPIO_IRQ_EDGE_FALL, true);
     gpio_set_irq_enabled(YELLOW_BTN_PIN, GPIO_IRQ_EDGE_FALL, true);
 
+    int DEBOUNCE_TIME = 200;
+
+    u_int32_t time_since_red = to_ms_since_boot(get_absolute_time());
+    u_int32_t time_since_blue = to_ms_since_boot(get_absolute_time());
+    u_int32_t time_since_green = to_ms_since_boot(get_absolute_time());
+    u_int32_t time_since_yellow = to_ms_since_boot(get_absolute_time());
+
     while (true) {
         if (red_flag) {
             red_flag = 0;
-            gpio_put(RED_LED_PIN, !gpio_get(RED_LED_PIN));
+            if  (to_ms_since_boot(get_absolute_time()) - time_since_red > DEBOUNCE_TIME) {
+                time_since_red = to_ms_since_boot(get_absolute_time());
+                gpio_put(RED_LED_PIN, !gpio_get(RED_LED_PIN));
+            }
         }
         if (blue_flag) {
             blue_flag = 0;
-            gpio_put(BLUE_LED_PIN, !gpio_get(BLUE_LED_PIN));
+            if (to_ms_since_boot(get_absolute_time()) - time_since_blue > DEBOUNCE_TIME) {
+                time_since_blue = to_ms_since_boot(get_absolute_time());
+                gpio_put(BLUE_LED_PIN, !gpio_get(BLUE_LED_PIN));
+            }
         }
         if (green_flag) {
             green_flag = 0;
-            gpio_put(GREEN_LED_PIN, !gpio_get(GREEN_LED_PIN));
+            if (to_ms_since_boot(get_absolute_time()) - time_since_green > DEBOUNCE_TIME) {
+                time_since_green = to_ms_since_boot(get_absolute_time());
+                gpio_put(GREEN_LED_PIN, !gpio_get(GREEN_LED_PIN));
+            }
         }
         if (yellow_flag) {
             yellow_flag = 0;
-            gpio_put(YELLOW_LED_PIN, !gpio_get(YELLOW_LED_PIN));
+            if (to_ms_since_boot(get_absolute_time()) - time_since_yellow > DEBOUNCE_TIME) {
+                time_since_yellow = to_ms_since_boot(get_absolute_time());
+                gpio_put(YELLOW_LED_PIN, !gpio_get(YELLOW_LED_PIN));
+            }
         }
     }
 }
