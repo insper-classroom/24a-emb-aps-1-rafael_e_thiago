@@ -73,10 +73,13 @@ void som(uint gpio){
         }
 }
 
-bool timer_callback(repeating_timer_t *rt) {
+int64_t alarm_callback(alarm_id_t id, void *user_data) {
     timer_flag = 1;
-    return true;
+
+    // Can return a value here in us to fire in the future
+    return 0;
 }
+
 
 int main() {
     stdio_init_all();
@@ -130,8 +133,6 @@ int main() {
     u_int32_t time_since_green = to_ms_since_boot(get_absolute_time());
     u_int32_t time_since_yellow = to_ms_since_boot(get_absolute_time());
 
-    repeating_timer_t timer;
-
     while (true) {
 
         if (timer_flag) {
@@ -143,7 +144,6 @@ int main() {
                 sleep_ms(200);
             }
             sleep_ms(500);
-            cancel_repeating_timer(&timer);
             }
 
         if (sequencia_len == acertos) {
@@ -151,7 +151,7 @@ int main() {
             sequencia[sequencia_len] = numeros_predeterminados[sequencia_len];
             sequencia_len++;
             acertos = 0;
-            add_repeating_timer_ms(2000, timer_callback, NULL, &timer);
+            add_alarm_in_ms(2000, alarm_callback, NULL, false);
         }
 
         if (red_flag) {
