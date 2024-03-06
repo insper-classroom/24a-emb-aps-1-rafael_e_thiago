@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
+#include "pico/time.h"
 
 const int BLUE_BTN_PIN = 18;
 const int RED_BTN_PIN = 19;
@@ -18,6 +19,8 @@ const int RED_LED_PIN = 12;
 const int GREEN_LED_PIN = 11;
 const int YELLOW_LED_PIN = 10;
 
+const int SWITCH_LIGAR = 16;
+
 const int BUZZER = 22;
 
 volatile int red_flag = 0;
@@ -26,6 +29,8 @@ volatile int green_flag = 0;
 volatile int yellow_flag = 0;
 
 volatile int timer_flag = 0;
+
+volatile int ligado = 0;
 
 void btn_callback(uint gpio, uint32_t events) {
     if (events == 0x4) {
@@ -37,6 +42,12 @@ void btn_callback(uint gpio, uint32_t events) {
             green_flag = 1;
         } if (gpio == YELLOW_BTN_PIN) {
             yellow_flag = 1;
+        } if (gpio == SWITCH_LIGAR) {
+            ligado = 0;
+        }
+    } else if (events == 0x8) {
+        if (gpio == SWITCH_LIGAR) {
+            ligado = 1;
         }
     }
 }
@@ -73,6 +84,55 @@ void som(uint gpio){
         }
 }
 
+// Função para reproduzir uma nota
+void play_note(int note_frequency, int duration_ms) {
+    // Calcula o período em microssegundos
+    uint32_t period = 1000000 / note_frequency;
+    // Calcula o tempo que a metade do período representa (duty cycle de 50%)
+    uint32_t half_period = period / 2;
+
+    while (duration_ms > 0) {
+        // Ligar o buzzer
+        gpio_put(BUZZER, 1);
+        busy_wait_us_32(half_period);
+        // Desligar o buzzer
+        gpio_put(BUZZER, 0);
+        busy_wait_us_32(half_period);
+        // Atualizar a duração restante
+        duration_ms -= (half_period * 2) / 1000;
+    }
+}
+
+// Função para tocar uma música
+void play_music(int *notes, int *durations, int length) {
+    for (int i = 0; i < length; i++) {
+        play_note(notes[i], durations[i]);
+        sleep_ms(50); // Pausa entre as notas
+    }
+}
+
+void play_defeat_music() {
+    int notes[] = {392, 330, 262, 196, 131, 98, 78, 0}; // Notas decrescentes
+    int durations[] = {300, 300, 300, 300, 300, 300, 300, 300}; // Durações das notas
+
+    int length = sizeof(notes) / sizeof(notes[0]);
+
+    // Tocar a música de derrota
+    printf("Tocando música de derrota...\n");
+    play_music(notes, durations, length);
+}
+
+void play_start_music() {
+    int notes[] = {262, 330, 392, 523, 392, 330};
+
+    int durations[] = {300, 300, 300, 300, 300, 300};
+    
+    int length = sizeof(notes) / sizeof(notes[0]);
+
+    printf("Tocando música de inicio...\n");
+    play_music(notes, durations, length);
+}
+
 int64_t alarm_callback(alarm_id_t id, void *user_data) {
     timer_flag = 1;
 
@@ -83,6 +143,8 @@ int64_t alarm_callback(alarm_id_t id, void *user_data) {
 
 int main() {
     stdio_init_all();
+
+    bool game = true;
 
     gpio_init(RED_BTN_PIN);
     gpio_set_dir(RED_BTN_PIN, GPIO_IN);
@@ -112,6 +174,10 @@ int main() {
     gpio_init(YELLOW_LED_PIN);
     gpio_set_dir(YELLOW_LED_PIN, GPIO_OUT);
 
+    gpio_init(SWITCH_LIGAR);
+    gpio_set_dir(SWITCH_LIGAR, GPIO_IN);
+    gpio_pull_up(SWITCH_LIGAR);
+
     gpio_init(BUZZER);
     gpio_set_dir(BUZZER, GPIO_OUT);
 
@@ -119,6 +185,10 @@ int main() {
     gpio_set_irq_enabled(BLUE_BTN_PIN, GPIO_IRQ_EDGE_FALL, true);
     gpio_set_irq_enabled(GREEN_BTN_PIN, GPIO_IRQ_EDGE_FALL, true);
     gpio_set_irq_enabled(YELLOW_BTN_PIN, GPIO_IRQ_EDGE_FALL, true);
+
+    gpio_set_irq_enabled(SWITCH_LIGAR, GPIO_IRQ_EDGE_FALL || GPIO_IRQ_EDGE_RISE, true);
+
+    play_start_music();
 
     int DEBOUNCE_TIME = 200;
 
@@ -135,7 +205,8 @@ int main() {
 
     while (true) {
 
-        if (timer_flag) {
+        if (game){
+            if (timer_flag) {
             timer_flag = 0;
             for (int i = 0; i < sequencia_len; i++) {
                 gpio_put(sequencia[i], 1);
@@ -161,7 +232,7 @@ int main() {
                 gpio_put(RED_LED_PIN, 1);
                 if (sequencia[acertos] == RED_LED_PIN) {
                     acertos++;
-                }
+                } 
                 som(RED_LED_PIN);
                 gpio_put(RED_LED_PIN, 0);
             }
@@ -173,7 +244,7 @@ int main() {
                 gpio_put(BLUE_LED_PIN, 1);
                 if (sequencia[acertos] == BLUE_LED_PIN) {
                     acertos++;
-                }
+                } 
                 som(BLUE_LED_PIN);
                 gpio_put(BLUE_LED_PIN, 0);
             }
@@ -185,7 +256,7 @@ int main() {
                 gpio_put(GREEN_LED_PIN, 1);
                 if (sequencia[acertos] == GREEN_LED_PIN) {
                     acertos++;
-                }
+                } 
                 som(GREEN_LED_PIN);
                 gpio_put(GREEN_LED_PIN, 0);
             }
@@ -197,10 +268,11 @@ int main() {
                 gpio_put(YELLOW_LED_PIN, 1);
                 if (sequencia[acertos] == YELLOW_LED_PIN) {
                     acertos++;
-                }
+                } 
                 som(YELLOW_LED_PIN);
                 gpio_put(YELLOW_LED_PIN, 0);
             }
+        }
         }
     }
 }
