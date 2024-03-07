@@ -54,34 +54,38 @@ void btn_callback(uint gpio, uint32_t events) {
 
 void som(uint gpio){
     if (gpio == RED_LED_PIN) {
-            for(int i = 0; i<600; i++){
-                    gpio_put(BUZZER, 1);
-                    sleep_us(150);
-                    gpio_put(BUZZER, 0);
-                    sleep_us(150);
-                }
-        } if (gpio == BLUE_LED_PIN) {
-            for(int i = 0; i<600; i++){
-                    gpio_put(BUZZER, 1);
-                    sleep_us(250);
-                    gpio_put(BUZZER, 0);
-                    sleep_us(250);
-                }
-        } if (gpio == GREEN_LED_PIN) {
-            for(int i = 0; i<600; i++){
-                    gpio_put(BUZZER, 1);
-                    sleep_us(200);
-                    gpio_put(BUZZER, 0);
-                    sleep_us(200);
-                }
-        } if (gpio == YELLOW_LED_PIN) {
-            for(int i = 0; i<600; i++){
-                    gpio_put(BUZZER, 1);
-                    sleep_us(400);
-                    gpio_put(BUZZER, 0);
-                    sleep_us(400);
-                }
+        int freq = 1000000.0/300.0;
+        for(int i = 0; i<200/(1000.0/freq); i++){
+            gpio_put(BUZZER, 1);
+            sleep_us(150);
+            gpio_put(BUZZER, 0);
+            sleep_us(150);
         }
+    } if (gpio == BLUE_LED_PIN) {
+        int freq = 1000000.0/500;
+        for(int i = 0; i<200/(1000.0/freq); i++){
+            gpio_put(BUZZER, 1);
+            sleep_us(250);
+            gpio_put(BUZZER, 0);
+            sleep_us(250);
+        }
+    } if (gpio == GREEN_LED_PIN) {
+        int freq = 1000000.0/400;
+        for(int i = 0; i<200.0/(1000.0/freq); i++){
+            gpio_put(BUZZER, 1);
+            sleep_us(200);
+            gpio_put(BUZZER, 0);
+            sleep_us(200);
+        }
+    } if (gpio == YELLOW_LED_PIN) {
+        int freq = 1000000.0/800;
+        for(int i = 0; i<200/(1000.0/freq); i++){
+            gpio_put(BUZZER, 1);
+            sleep_us(400);
+            gpio_put(BUZZER, 0);
+            sleep_us(400);
+        }
+    }
 }
 
 // Função para reproduzir uma nota
@@ -190,7 +194,7 @@ int main() {
 
     play_start_music();
 
-    int DEBOUNCE_TIME = 200;
+    int DEBOUNCE_TIME = 250;
 
     // srand(to_us_since_boot(get_absolute_time()));
     int sequencia[100];
@@ -205,74 +209,82 @@ int main() {
 
     while (true) {
 
-        if (game){
+        while (game){
             if (timer_flag) {
-            timer_flag = 0;
-            for (int i = 0; i < sequencia_len; i++) {
-                gpio_put(sequencia[i], 1);
-                som(sequencia[i]);
-                gpio_put(sequencia[i], 0);
-                sleep_ms(200);
-            }
-            sleep_ms(500);
+                timer_flag = 0;
+                for (int i = 0; i < sequencia_len; i++) {
+                    gpio_put(sequencia[i], 1);
+                    som(sequencia[i]);
+                    gpio_put(sequencia[i], 0);
+                    sleep_ms(200);
+                }
+                sleep_ms(500);
             }
 
-        if (sequencia_len == acertos) {
-            // sequencia[sequencia_len] = ((double) rand()/__RAND_MAX) * (21 - 18) + 18;
-            sequencia[sequencia_len] = numeros_predeterminados[sequencia_len];
-            sequencia_len++;
-            acertos = 0;
-            add_alarm_in_ms(2000, alarm_callback, NULL, false);
-        }
+            if (sequencia_len == acertos) {
+                // sequencia[sequencia_len] = ((double) rand()/__RAND_MAX) * (21 - 18) + 18;
+                sequencia[sequencia_len] = numeros_predeterminados[sequencia_len];
+                sequencia_len++;
+                acertos = 0;
+                add_alarm_in_ms(2000, alarm_callback, NULL, false);
+            }
 
-        if (red_flag) {
-            red_flag = 0;
-            if  (to_ms_since_boot(get_absolute_time()) - time_since_red > DEBOUNCE_TIME) {
-                time_since_red = to_ms_since_boot(get_absolute_time());
-                gpio_put(RED_LED_PIN, 1);
-                if (sequencia[acertos] == RED_LED_PIN) {
-                    acertos++;
-                } 
-                som(RED_LED_PIN);
-                gpio_put(RED_LED_PIN, 0);
+            if (red_flag) {
+                red_flag = 0;
+                if  (to_ms_since_boot(get_absolute_time()) - time_since_red > DEBOUNCE_TIME) {
+                    time_since_red = to_ms_since_boot(get_absolute_time());
+                    gpio_put(RED_LED_PIN, 1);
+                    if (sequencia[acertos] == RED_LED_PIN) {
+                        acertos++;
+                    } else {
+                        play_defeat_music();
+                    }
+                    som(RED_LED_PIN);
+                    gpio_put(RED_LED_PIN, 0);
+                }
             }
-        }
-        if (blue_flag) {
-            blue_flag = 0;
-            if (to_ms_since_boot(get_absolute_time()) - time_since_blue > DEBOUNCE_TIME) {
-                time_since_blue = to_ms_since_boot(get_absolute_time());
-                gpio_put(BLUE_LED_PIN, 1);
-                if (sequencia[acertos] == BLUE_LED_PIN) {
-                    acertos++;
-                } 
-                som(BLUE_LED_PIN);
-                gpio_put(BLUE_LED_PIN, 0);
+            if (blue_flag) {
+                blue_flag = 0;
+                if (to_ms_since_boot(get_absolute_time()) - time_since_blue > DEBOUNCE_TIME) {
+                    time_since_blue = to_ms_since_boot(get_absolute_time());
+                    gpio_put(BLUE_LED_PIN, 1);
+                    if (sequencia[acertos] == BLUE_LED_PIN) {
+                        acertos++;
+                    } else {
+                        play_defeat_music();
+                    }
+                    som(BLUE_LED_PIN);
+                    gpio_put(BLUE_LED_PIN, 0);
+                }
             }
-        }
-        if (green_flag) {
-            green_flag = 0;
-            if (to_ms_since_boot(get_absolute_time()) - time_since_green > DEBOUNCE_TIME) {
-                time_since_green = to_ms_since_boot(get_absolute_time());
-                gpio_put(GREEN_LED_PIN, 1);
-                if (sequencia[acertos] == GREEN_LED_PIN) {
-                    acertos++;
-                } 
-                som(GREEN_LED_PIN);
-                gpio_put(GREEN_LED_PIN, 0);
+            if (green_flag) {
+                green_flag = 0;
+                if (to_ms_since_boot(get_absolute_time()) - time_since_green > DEBOUNCE_TIME) {
+                    time_since_green = to_ms_since_boot(get_absolute_time());
+                    gpio_put(GREEN_LED_PIN, 1);
+                    if (sequencia[acertos] == GREEN_LED_PIN) {
+                        acertos++;
+                    } else {
+                        play_defeat_music();
+                    }
+                    som(GREEN_LED_PIN);
+                    gpio_put(GREEN_LED_PIN, 0);
+                }
             }
-        }
-        if (yellow_flag) {
-            yellow_flag = 0;
-            if (to_ms_since_boot(get_absolute_time()) - time_since_yellow > DEBOUNCE_TIME) {
-                time_since_yellow = to_ms_since_boot(get_absolute_time());
-                gpio_put(YELLOW_LED_PIN, 1);
-                if (sequencia[acertos] == YELLOW_LED_PIN) {
-                    acertos++;
-                } 
-                som(YELLOW_LED_PIN);
-                gpio_put(YELLOW_LED_PIN, 0);
+            if (yellow_flag) {
+                yellow_flag = 0;
+                if (to_ms_since_boot(get_absolute_time()) - time_since_yellow > DEBOUNCE_TIME) {
+                    time_since_yellow = to_ms_since_boot(get_absolute_time());
+                    gpio_put(YELLOW_LED_PIN, 1);
+                    if (sequencia[acertos] == YELLOW_LED_PIN) {
+                        acertos++;
+                    } else {
+                        play_defeat_music();
+                    }
+                    som(YELLOW_LED_PIN);
+                    gpio_put(YELLOW_LED_PIN, 0);
+                }
             }
-        }
         }
     }
 }
