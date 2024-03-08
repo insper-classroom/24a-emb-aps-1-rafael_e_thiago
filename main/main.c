@@ -135,6 +135,11 @@ void play_defeat_music() {
 
     int length = sizeof(notes) / sizeof(notes[0]);
 
+    gpio_put(RED_LED_PIN, 0);
+    gpio_put(BLUE_LED_PIN, 0);
+    gpio_put(GREEN_LED_PIN, 0);
+    gpio_put(YELLOW_LED_PIN, 0);
+
     // Tocar a música de derrota
     printf("Tocando música de derrota...\n");
     play_music(notes, durations, length);
@@ -287,7 +292,7 @@ int main() {
             }
 
             if (sequencia_len == acertos) {
-                sequencia[sequencia_len] = ((double) rand()/__RAND_MAX) * (13 - 10) + 10;
+                sequencia[sequencia_len] = ((double) rand()/__RAND_MAX) * (14 - 10) + 10;
                 sequencia_len++;
                 acertos = 0;
                 if (acerto_led > 6) {
@@ -309,7 +314,6 @@ int main() {
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
                         play_defeat_music();
-                        gpio_put(RED_LED_PIN, 0);
                     }
                     som(RED_LED_PIN);
                     gpio_put(RED_LED_PIN, 0);
@@ -326,7 +330,6 @@ int main() {
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
                         play_defeat_music();
-                        gpio_put(BLUE_LED_PIN, 0);
                     }
                     som(BLUE_LED_PIN);
                     gpio_put(BLUE_LED_PIN, 0);
@@ -343,7 +346,6 @@ int main() {
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
                         play_defeat_music();
-                        gpio_put(GREEN_LED_PIN, 0);
                     }
                     som(GREEN_LED_PIN);
                     gpio_put(GREEN_LED_PIN, 0);
@@ -360,7 +362,6 @@ int main() {
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
                         play_defeat_music();
-                        gpio_put(YELLOW_LED_PIN, 0);
                     }
                     som(YELLOW_LED_PIN);
                     gpio_put(YELLOW_LED_PIN, 0);
