@@ -5,6 +5,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "pico/time.h"
@@ -196,9 +197,8 @@ int main() {
 
     int DEBOUNCE_TIME = 250;
 
-    // srand(to_us_since_boot(get_absolute_time()));
+    srand(to_us_since_boot(get_absolute_time()));
     int sequencia[100];
-    int numeros_predeterminados[6] = {13, 11, 13, 10, 12, 11};
     int sequencia_len = 0;
     int acertos = 0;
 
@@ -208,7 +208,6 @@ int main() {
     u_int32_t time_since_yellow = to_ms_since_boot(get_absolute_time());
 
     while (true) {
-
         while (game){
             if (timer_flag) {
                 timer_flag = 0;
@@ -222,8 +221,7 @@ int main() {
             }
 
             if (sequencia_len == acertos) {
-                // sequencia[sequencia_len] = ((double) rand()/__RAND_MAX) * (21 - 18) + 18;
-                sequencia[sequencia_len] = numeros_predeterminados[sequencia_len];
+                sequencia[sequencia_len] = ((double) rand()/__RAND_MAX) * (13 - 10) + 10;
                 sequencia_len++;
                 acertos = 0;
                 add_alarm_in_ms(2000, alarm_callback, NULL, false);
