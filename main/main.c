@@ -236,6 +236,7 @@ int main() {
                         acertos++;
                     } else {
                         play_defeat_music();
+                        gpio_put(RED_LED_PIN, 0);
                     }
                     som(RED_LED_PIN);
                     gpio_put(RED_LED_PIN, 0);
@@ -250,6 +251,7 @@ int main() {
                         acertos++;
                     } else {
                         play_defeat_music();
+                        gpio_put(BLUE_LED_PIN, 0);
                     }
                     som(BLUE_LED_PIN);
                     gpio_put(BLUE_LED_PIN, 0);
@@ -264,6 +266,7 @@ int main() {
                         acertos++;
                     } else {
                         play_defeat_music();
+                        gpio_put(GREEN_LED_PIN, 0);
                     }
                     som(GREEN_LED_PIN);
                     gpio_put(GREEN_LED_PIN, 0);
@@ -278,6 +281,7 @@ int main() {
                         acertos++;
                     } else {
                         play_defeat_music();
+                        gpio_put(YELLOW_LED_PIN, 0);
                     }
                     som(YELLOW_LED_PIN);
                     gpio_put(YELLOW_LED_PIN, 0);
