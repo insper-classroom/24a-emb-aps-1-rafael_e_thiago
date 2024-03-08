@@ -140,8 +140,6 @@ void play_defeat_music() {
     gpio_put(GREEN_LED_PIN, 0);
     gpio_put(YELLOW_LED_PIN, 0);
 
-    // Tocar a música de derrota
-    printf("Tocando música de derrota...\n");
     play_music(notes, durations, length);
 }
 
@@ -152,7 +150,18 @@ void play_start_music() {
     
     int length = sizeof(notes) / sizeof(notes[0]);
 
-    printf("Tocando música de inicio...\n");
+    play_music(notes, durations, length);
+}
+
+void play_coin_sound() {
+    // Frequências das notas para reproduzir o som de uma moeda do Mario
+    int notes[] = {2093, 3136, 4186, 3136};
+    // Durações das notas
+    int durations[] = {150, 150, 150, 150};
+
+    int length = sizeof(notes) / sizeof(notes[0]);
+
+    // Tocar a música
     play_music(notes, durations, length);
 }
 
@@ -177,7 +186,7 @@ void right_led(int acertos){
     } else if (acertos == 6){
         gpio_put(FITA_LED_6, 1);
         sleep_ms(50);
-        // play_start_music();
+        play_coin_sound();
         gpio_put(FITA_LED_1, 0);
         gpio_put(FITA_LED_2, 0);
         gpio_put(FITA_LED_3, 0);
