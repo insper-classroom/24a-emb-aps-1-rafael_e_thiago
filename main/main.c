@@ -139,7 +139,12 @@ void play_defeat_music() {
     gpio_put(BLUE_LED_PIN, 0);
     gpio_put(GREEN_LED_PIN, 0);
     gpio_put(YELLOW_LED_PIN, 0);
-
+    gpio_put(FITA_LED_1, 0);
+    gpio_put(FITA_LED_2, 0);
+    gpio_put(FITA_LED_3, 0);
+    gpio_put(FITA_LED_4, 0);
+    gpio_put(FITA_LED_5, 0);
+    gpio_put(FITA_LED_6, 0);
     play_music(notes, durations, length);
 }
 
