@@ -160,9 +160,9 @@ void play_start_music() {
 
 void play_coin_sound() {
     // Frequências das notas para reproduzir o som de uma moeda do Mario
-    int notes[] = {2093, 3136, 4186, 3136};
+    int notes[] = {659, 784, 523};
     // Durações das notas
-    int durations[] = {150, 150, 150, 150};
+    int durations[] = {150, 150, 150};
 
     int length = sizeof(notes) / sizeof(notes[0]);
 
@@ -178,6 +178,7 @@ int64_t alarm_callback(alarm_id_t id, void *user_data) {
 }
 
 void right_led(int acertos){
+    play_coin_sound();
     if (acertos == 1){
         gpio_put(FITA_LED_1, 1);
     } else if (acertos == 2){
