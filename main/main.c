@@ -37,6 +37,7 @@ volatile int green_flag = 0;
 volatile int yellow_flag = 0;
 
 volatile int timer_flag = 0;
+volatile bool alarm_timeout_fired = false;
 
 volatile int ligado = 0;
 
@@ -94,6 +95,11 @@ void som(uint gpio){
             sleep_us(400);
         }
     }
+}
+
+int64_t alarm_timeout_callback(alarm_id_t id, void *user_data) {
+    alarm_timeout_fired = true;
+    return 0;
 }
 
 // Função para reproduzir uma nota
@@ -234,6 +240,8 @@ int main() {
     int sequencia_len = 0;
     int acertos = 0;
 
+    alarm_id_t alarm_timeout;
+
     u_int32_t time_since_red = to_ms_since_boot(get_absolute_time());
     u_int32_t time_since_blue = to_ms_since_boot(get_absolute_time());
     u_int32_t time_since_green = to_ms_since_boot(get_absolute_time());
@@ -243,6 +251,7 @@ int main() {
         while (game){
             if (timer_flag) {
                 timer_flag = 0;
+                cancel_alarm(alarm_timeout);
                 for (int i = 0; i < sequencia_len; i++) {
                     gpio_put(sequencia[i], 1);
                     som(sequencia[i]);
@@ -250,6 +259,7 @@ int main() {
                     sleep_ms(200);
                 }
                 sleep_ms(500);
+                alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
             }
 
             if (sequencia_len == acertos) {
@@ -266,6 +276,8 @@ int main() {
                     gpio_put(RED_LED_PIN, 1);
                     if (sequencia[acertos] == RED_LED_PIN) {
                         acertos++;
+                        cancel_alarm(alarm_timeout);
+                        alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
                         play_defeat_music();
                         gpio_put(RED_LED_PIN, 0);
@@ -281,6 +293,8 @@ int main() {
                     gpio_put(BLUE_LED_PIN, 1);
                     if (sequencia[acertos] == BLUE_LED_PIN) {
                         acertos++;
+                        cancel_alarm(alarm_timeout);
+                        alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
                         play_defeat_music();
                         gpio_put(BLUE_LED_PIN, 0);
@@ -296,6 +310,8 @@ int main() {
                     gpio_put(GREEN_LED_PIN, 1);
                     if (sequencia[acertos] == GREEN_LED_PIN) {
                         acertos++;
+                        cancel_alarm(alarm_timeout);
+                        alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
                         play_defeat_music();
                         gpio_put(GREEN_LED_PIN, 0);
@@ -311,6 +327,8 @@ int main() {
                     gpio_put(YELLOW_LED_PIN, 1);
                     if (sequencia[acertos] == YELLOW_LED_PIN) {
                         acertos++;
+                        cancel_alarm(alarm_timeout);
+                        alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
                         play_defeat_music();
                         gpio_put(YELLOW_LED_PIN, 0);
