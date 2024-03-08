@@ -158,6 +158,29 @@ int64_t alarm_callback(alarm_id_t id, void *user_data) {
     return 0;
 }
 
+void right_led(int acertos){
+    if (acertos == 1){
+        gpio_put(FITA_LED_1, 1);
+    } else if (acertos == 2){
+        gpio_put(FITA_LED_2, 1);
+    } else if (acertos == 3){
+        gpio_put(FITA_LED_3, 1);
+    } else if (acertos == 4){
+        gpio_put(FITA_LED_4, 1);
+    } else if (acertos == 5){
+        gpio_put(FITA_LED_5, 1);
+    } else if (acertos == 6){
+        gpio_put(FITA_LED_6, 1);
+        sleep_ms(50);
+        play_start_music();
+        gpio_put(FITA_LED_1, 0);
+        gpio_put(FITA_LED_2, 0);
+        gpio_put(FITA_LED_3, 0);
+        gpio_put(FITA_LED_4, 0);
+        gpio_put(FITA_LED_5, 0);
+        gpio_put(FITA_LED_6, 0);
+    }
+}
 
 int main() {
     stdio_init_all();
@@ -210,13 +233,6 @@ int main() {
     gpio_init(FITA_LED_6);
     gpio_set_dir(FITA_LED_6, GPIO_OUT);
 
-    gpio_put(FITA_LED_1, 1);
-    gpio_put(FITA_LED_2, 1);
-    gpio_put(FITA_LED_3, 1);
-    gpio_put(FITA_LED_4, 1);
-    gpio_put(FITA_LED_5, 1);
-    gpio_put(FITA_LED_6, 1);
-
     gpio_init(SWITCH_LIGAR);
     gpio_set_dir(SWITCH_LIGAR, GPIO_IN);
     gpio_pull_up(SWITCH_LIGAR);
@@ -239,6 +255,7 @@ int main() {
     int sequencia[100];
     int sequencia_len = 0;
     int acertos = 0;
+    int acerto_led = 0;
 
     alarm_id_t alarm_timeout;
 
@@ -276,6 +293,11 @@ int main() {
                     gpio_put(RED_LED_PIN, 1);
                     if (sequencia[acertos] == RED_LED_PIN) {
                         acertos++;
+                        acerto_led++;
+                        if (acerto_led > 6) {
+                            acerto_led = 1;
+                        }
+                        right_led(acerto_led);
                         cancel_alarm(alarm_timeout);
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
@@ -293,6 +315,11 @@ int main() {
                     gpio_put(BLUE_LED_PIN, 1);
                     if (sequencia[acertos] == BLUE_LED_PIN) {
                         acertos++;
+                        acerto_led++;
+                        if (acerto_led > 6) {
+                            acerto_led = 1;
+                        }
+                        right_led(acerto_led);
                         cancel_alarm(alarm_timeout);
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
@@ -310,6 +337,11 @@ int main() {
                     gpio_put(GREEN_LED_PIN, 1);
                     if (sequencia[acertos] == GREEN_LED_PIN) {
                         acertos++;
+                        acerto_led++;
+                        if (acerto_led > 6) {
+                            acerto_led = 1;
+                        }
+                        right_led(acerto_led);
                         cancel_alarm(alarm_timeout);
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
@@ -327,6 +359,11 @@ int main() {
                     gpio_put(YELLOW_LED_PIN, 1);
                     if (sequencia[acertos] == YELLOW_LED_PIN) {
                         acertos++;
+                        acerto_led++;
+                        if (acerto_led > 6) {
+                            acerto_led = 1;
+                        }
+                        right_led(acerto_led);
                         cancel_alarm(alarm_timeout);
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
