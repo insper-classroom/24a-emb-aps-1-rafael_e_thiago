@@ -10,6 +10,13 @@
 #include "hardware/gpio.h"
 #include "pico/time.h"
 
+const int FITA_LED_1 = 5;
+const int FITA_LED_2 = 6;
+const int FITA_LED_3 = 7;
+const int FITA_LED_4 = 8;
+const int FITA_LED_5 = 9;
+const int FITA_LED_6 = 14;
+
 const int BLUE_BTN_PIN = 18;
 const int RED_BTN_PIN = 19;
 const int GREEN_BTN_PIN = 20;
@@ -22,7 +29,7 @@ const int YELLOW_LED_PIN = 10;
 
 const int SWITCH_LIGAR = 16;
 
-const int BUZZER = 22;
+const int BUZZER = 15;
 
 volatile int red_flag = 0;
 volatile int blue_flag = 0;
@@ -178,6 +185,31 @@ int main() {
 
     gpio_init(YELLOW_LED_PIN);
     gpio_set_dir(YELLOW_LED_PIN, GPIO_OUT);
+
+    gpio_init(FITA_LED_1);
+    gpio_set_dir(FITA_LED_1, GPIO_OUT);
+
+    gpio_init(FITA_LED_2);
+    gpio_set_dir(FITA_LED_2, GPIO_OUT);
+
+    gpio_init(FITA_LED_3);
+    gpio_set_dir(FITA_LED_3, GPIO_OUT);
+    
+    gpio_init(FITA_LED_4);
+    gpio_set_dir(FITA_LED_4, GPIO_OUT);
+
+    gpio_init(FITA_LED_5);
+    gpio_set_dir(FITA_LED_5, GPIO_OUT);
+
+    gpio_init(FITA_LED_6);
+    gpio_set_dir(FITA_LED_6, GPIO_OUT);
+
+    gpio_put(FITA_LED_1, 1);
+    gpio_put(FITA_LED_2, 1);
+    gpio_put(FITA_LED_3, 1);
+    gpio_put(FITA_LED_4, 1);
+    gpio_put(FITA_LED_5, 1);
+    gpio_put(FITA_LED_6, 1);
 
     gpio_init(SWITCH_LIGAR);
     gpio_set_dir(SWITCH_LIGAR, GPIO_IN);
