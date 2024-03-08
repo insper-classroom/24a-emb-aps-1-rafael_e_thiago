@@ -162,17 +162,17 @@ void right_led(int acertos){
     if (acertos == 1){
         gpio_put(FITA_LED_1, 1);
     } else if (acertos == 2){
-        gpio_put(FITA_LED_2, 1);
-    } else if (acertos == 3){
-        gpio_put(FITA_LED_3, 1);
-    } else if (acertos == 4){
         gpio_put(FITA_LED_4, 1);
-    } else if (acertos == 5){
+    } else if (acertos == 3){
         gpio_put(FITA_LED_5, 1);
+    } else if (acertos == 4){
+        gpio_put(FITA_LED_3, 1);
+    } else if (acertos == 5){
+        gpio_put(FITA_LED_2, 1);
     } else if (acertos == 6){
         gpio_put(FITA_LED_6, 1);
         sleep_ms(50);
-        play_start_music();
+        // play_start_music();
         gpio_put(FITA_LED_1, 0);
         gpio_put(FITA_LED_2, 0);
         gpio_put(FITA_LED_3, 0);
@@ -257,7 +257,7 @@ int main() {
     int acertos = 0;
     int acerto_led = 0;
 
-    alarm_id_t alarm_timeout;
+    alarm_id_t alarm_timeout = add_alarm_in_ms(6000, alarm_timeout_callback, NULL, false);
 
     u_int32_t time_since_red = to_ms_since_boot(get_absolute_time());
     u_int32_t time_since_blue = to_ms_since_boot(get_absolute_time());
@@ -266,6 +266,13 @@ int main() {
 
     while (true) {
         while (game){
+
+            if (alarm_timeout_fired) {
+                alarm_timeout_fired = 0;
+                play_defeat_music();
+                game = false;
+            }
+
             if (timer_flag) {
                 timer_flag = 0;
                 cancel_alarm(alarm_timeout);
@@ -283,6 +290,11 @@ int main() {
                 sequencia[sequencia_len] = ((double) rand()/__RAND_MAX) * (13 - 10) + 10;
                 sequencia_len++;
                 acertos = 0;
+                if (acerto_led > 6) {
+                    acerto_led = 1;
+                }
+                right_led(acerto_led);
+                acerto_led++;
                 add_alarm_in_ms(2000, alarm_callback, NULL, false);
             }
 
@@ -293,11 +305,6 @@ int main() {
                     gpio_put(RED_LED_PIN, 1);
                     if (sequencia[acertos] == RED_LED_PIN) {
                         acertos++;
-                        acerto_led++;
-                        if (acerto_led > 6) {
-                            acerto_led = 1;
-                        }
-                        right_led(acerto_led);
                         cancel_alarm(alarm_timeout);
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
@@ -315,11 +322,6 @@ int main() {
                     gpio_put(BLUE_LED_PIN, 1);
                     if (sequencia[acertos] == BLUE_LED_PIN) {
                         acertos++;
-                        acerto_led++;
-                        if (acerto_led > 6) {
-                            acerto_led = 1;
-                        }
-                        right_led(acerto_led);
                         cancel_alarm(alarm_timeout);
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
@@ -337,11 +339,6 @@ int main() {
                     gpio_put(GREEN_LED_PIN, 1);
                     if (sequencia[acertos] == GREEN_LED_PIN) {
                         acertos++;
-                        acerto_led++;
-                        if (acerto_led > 6) {
-                            acerto_led = 1;
-                        }
-                        right_led(acerto_led);
                         cancel_alarm(alarm_timeout);
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
@@ -359,11 +356,6 @@ int main() {
                     gpio_put(YELLOW_LED_PIN, 1);
                     if (sequencia[acertos] == YELLOW_LED_PIN) {
                         acertos++;
-                        acerto_led++;
-                        if (acerto_led > 6) {
-                            acerto_led = 1;
-                        }
-                        right_led(acerto_led);
                         cancel_alarm(alarm_timeout);
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
