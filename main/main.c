@@ -178,7 +178,6 @@ int64_t alarm_callback(alarm_id_t id, void *user_data) {
 }
 
 void right_led(int acertos){
-    play_coin_sound();
     if (acertos == 1){
         gpio_put(FITA_LED_1, 1);
     } else if (acertos == 2){
@@ -205,6 +204,7 @@ void right_led(int acertos){
 int main() {
     stdio_init_all();
 
+    bool start = false;
     bool game = true;
 
     gpio_init(RED_BTN_PIN);
@@ -285,7 +285,7 @@ int main() {
     u_int32_t time_since_yellow = to_ms_since_boot(get_absolute_time());
 
     while (true) {
-        while (game){
+        if (game){
 
             if (alarm_timeout_fired) {
                 alarm_timeout_fired = 0;
@@ -293,9 +293,25 @@ int main() {
                 game = false;
             }
 
+            if (sequencia_len == acertos) {
+                cancel_alarm(alarm_timeout);
+                start = false;
+                if (sequencia_len > 0) {
+                    acerto_led++;
+                }
+                sequencia[sequencia_len] = ((double) rand()/__RAND_MAX) * (14 - 10) + 10;
+                sequencia_len++;
+                acertos = 0;
+                if (acerto_led > 6) {
+                    acerto_led = 1;
+                }
+                right_led(acerto_led);
+                add_alarm_in_ms(1000, alarm_callback, NULL, false);
+            }
+
             if (timer_flag) {
                 timer_flag = 0;
-                cancel_alarm(alarm_timeout);
+                start = true;
                 for (int i = 0; i < sequencia_len; i++) {
                     gpio_put(sequencia[i], 1);
                     som(sequencia[i]);
@@ -306,21 +322,9 @@ int main() {
                 alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
             }
 
-            if (sequencia_len == acertos) {
-                sequencia[sequencia_len] = ((double) rand()/__RAND_MAX) * (14 - 10) + 10;
-                sequencia_len++;
-                acertos = 0;
-                if (acerto_led > 6) {
-                    acerto_led = 1;
-                }
-                right_led(acerto_led);
-                acerto_led++;
-                add_alarm_in_ms(2000, alarm_callback, NULL, false);
-            }
-
             if (red_flag) {
                 red_flag = 0;
-                if  (to_ms_since_boot(get_absolute_time()) - time_since_red > DEBOUNCE_TIME) {
+                if  (to_ms_since_boot(get_absolute_time()) - time_since_red > DEBOUNCE_TIME && start) {
                     time_since_red = to_ms_since_boot(get_absolute_time());
                     gpio_put(RED_LED_PIN, 1);
                     if (sequencia[acertos] == RED_LED_PIN) {
@@ -336,7 +340,7 @@ int main() {
             }
             if (blue_flag) {
                 blue_flag = 0;
-                if (to_ms_since_boot(get_absolute_time()) - time_since_blue > DEBOUNCE_TIME) {
+                if (to_ms_since_boot(get_absolute_time()) - time_since_blue > DEBOUNCE_TIME && start) {
                     time_since_blue = to_ms_since_boot(get_absolute_time());
                     gpio_put(BLUE_LED_PIN, 1);
                     if (sequencia[acertos] == BLUE_LED_PIN) {
@@ -352,7 +356,7 @@ int main() {
             }
             if (green_flag) {
                 green_flag = 0;
-                if (to_ms_since_boot(get_absolute_time()) - time_since_green > DEBOUNCE_TIME) {
+                if (to_ms_since_boot(get_absolute_time()) - time_since_green > DEBOUNCE_TIME && start) {
                     time_since_green = to_ms_since_boot(get_absolute_time());
                     gpio_put(GREEN_LED_PIN, 1);
                     if (sequencia[acertos] == GREEN_LED_PIN) {
@@ -368,7 +372,7 @@ int main() {
             }
             if (yellow_flag) {
                 yellow_flag = 0;
-                if (to_ms_since_boot(get_absolute_time()) - time_since_yellow > DEBOUNCE_TIME) {
+                if (to_ms_since_boot(get_absolute_time()) - time_since_yellow > DEBOUNCE_TIME && start) {
                     time_since_yellow = to_ms_since_boot(get_absolute_time());
                     gpio_put(YELLOW_LED_PIN, 1);
                     if (sequencia[acertos] == YELLOW_LED_PIN) {
