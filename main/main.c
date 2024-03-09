@@ -341,13 +341,13 @@ int main() {
                     if (sequencia[acertos] == RED_LED_PIN) {
                         acertos++;
                         cancel_alarm(alarm_timeout);
+                        som(RED_LED_PIN);
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
                         play_defeat_music();
                         game = false;
                         game_over = true;
                     }
-                    som(RED_LED_PIN);
                     gpio_put(RED_LED_PIN, 0);
                 }
             }
@@ -359,13 +359,13 @@ int main() {
                     if (sequencia[acertos] == BLUE_LED_PIN) {
                         acertos++;
                         cancel_alarm(alarm_timeout);
+                        som(BLUE_LED_PIN);
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
                         play_defeat_music();
                         game = false;
                         game_over = true;
                     }
-                    som(BLUE_LED_PIN);
                     gpio_put(BLUE_LED_PIN, 0);
                 }
             }
@@ -374,16 +374,16 @@ int main() {
                 if (to_ms_since_boot(get_absolute_time()) - time_since_green > DEBOUNCE_TIME && start) {
                     time_since_green = to_ms_since_boot(get_absolute_time());
                     gpio_put(GREEN_LED_PIN, 1);
-                    if (sequencia[acertos] == GREEN_LED_PIN) {
+                    if (sequencia[acertos] == GREEN_LED_PIN) {                        
                         acertos++;
                         cancel_alarm(alarm_timeout);
+                        som(GREEN_LED_PIN);
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
                         play_defeat_music();
                         game = false;
                         game_over = true;
                     }
-                    som(GREEN_LED_PIN);
                     gpio_put(GREEN_LED_PIN, 0);
                 }
             }
@@ -395,13 +395,13 @@ int main() {
                     if (sequencia[acertos] == YELLOW_LED_PIN) {
                         acertos++;
                         cancel_alarm(alarm_timeout);
+                        som(YELLOW_LED_PIN);
                         alarm_timeout = add_alarm_in_us(10000000, alarm_timeout_callback, NULL, false);
                     } else {
                         play_defeat_music();
                         game = false;
                         game_over = true;
                     }
-                    som(YELLOW_LED_PIN);
                     gpio_put(YELLOW_LED_PIN, 0);
                 }
             }
