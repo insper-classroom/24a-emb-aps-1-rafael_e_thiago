@@ -280,6 +280,8 @@ int main() {
     int acertos = 0;
     int acerto_led = 0;
 
+    int dificuldade = 1;
+
     alarm_id_t alarm_timeout = add_alarm_in_ms(6000, alarm_timeout_callback, NULL, false);
 
     u_int32_t time_since_red = to_ms_since_boot(get_absolute_time());
@@ -303,8 +305,13 @@ int main() {
                 if (sequencia_len > 0) {
                     acerto_led++;
                 }
-                sequencia[sequencia_len] = ((double) rand()/__RAND_MAX) * (14 - 10) + 10;
-                sequencia_len++;
+                if (acerto_led == 6) {
+                    dificuldade++;
+                }
+                for (int i = 0; i < dificuldade; i++) {
+                    sequencia[sequencia_len] = ((double) rand()/__RAND_MAX) * (14 - 10) + 10;
+                    sequencia_len++;
+                }
                 acertos = 0;
                 if (acerto_led > 6) {
                     acerto_led = 1;
@@ -403,7 +410,7 @@ int main() {
         if (game_over) {
             game_over = false;
             sleep_ms(100);
-            for (int i = 0; i < sequencia_len - 1; i++) {
+            for (int i = 0; i < sequencia_len - dificuldade; i++) {
                 gpio_put(RED_LED_PIN, 1);
                 gpio_put(BLUE_LED_PIN, 1);
                 gpio_put(GREEN_LED_PIN, 1);
