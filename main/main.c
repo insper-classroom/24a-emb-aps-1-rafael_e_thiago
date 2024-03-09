@@ -420,7 +420,7 @@ int main() {
                 gpio_put(BLUE_LED_PIN, 0);
                 gpio_put(GREEN_LED_PIN, 0);
                 gpio_put(YELLOW_LED_PIN, 0);
-                sleep_ms(200);
+                sleep_ms(500);
             }
         }
     }
