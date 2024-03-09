@@ -104,20 +104,22 @@ int64_t alarm_timeout_callback(alarm_id_t id, void *user_data) {
 
 // Função para reproduzir uma nota
 void play_note(int note_frequency, int duration_ms) {
-    // Calcula o período em microssegundos
-    uint32_t period = 1000000 / note_frequency;
-    // Calcula o tempo que a metade do período representa (duty cycle de 50%)
-    uint32_t half_period = period / 2;
+    if (note_frequency > 0) {
+        // Calcula o período em microssegundos
+        uint32_t period = 1000000 / note_frequency;
+        // Calcula o tempo que a metade do período representa (duty cycle de 50%)
+        uint32_t half_period = period / 2;
 
-    while (duration_ms > 0) {
-        // Ligar o buzzer
-        gpio_put(BUZZER, 1);
-        busy_wait_us_32(half_period);
-        // Desligar o buzzer
-        gpio_put(BUZZER, 0);
-        busy_wait_us_32(half_period);
-        // Atualizar a duração restante
-        duration_ms -= (half_period * 2) / 1000;
+        while (duration_ms > 0) {
+            // Ligar o buzzer
+            gpio_put(BUZZER, 1);
+            busy_wait_us_32(half_period);
+            // Desligar o buzzer
+            gpio_put(BUZZER, 0);
+            busy_wait_us_32(half_period);
+            // Atualizar a duração restante
+            duration_ms -= (half_period * 2) / 1000;
+        }
     }
 }
 
@@ -206,6 +208,7 @@ int main() {
 
     bool start = false;
     bool game = true;
+    bool game_over = false;
 
     gpio_init(RED_BTN_PIN);
     gpio_set_dir(RED_BTN_PIN, GPIO_IN);
@@ -291,6 +294,7 @@ int main() {
                 alarm_timeout_fired = 0;
                 play_defeat_music();
                 game = false;
+                game_over = true;
             }
 
             if (sequencia_len == acertos) {
@@ -385,6 +389,23 @@ int main() {
                     som(YELLOW_LED_PIN);
                     gpio_put(YELLOW_LED_PIN, 0);
                 }
+            }
+        }
+
+        if (game_over) {
+            game_over = false;
+            sleep_ms(100);
+            for (int i = 0; i < sequencia_len - 1; i++) {
+                gpio_put(RED_LED_PIN, 1);
+                gpio_put(BLUE_LED_PIN, 1);
+                gpio_put(GREEN_LED_PIN, 1);
+                gpio_put(YELLOW_LED_PIN, 1);
+                som(GREEN_LED_PIN);
+                gpio_put(RED_LED_PIN, 0);
+                gpio_put(BLUE_LED_PIN, 0);
+                gpio_put(GREEN_LED_PIN, 0);
+                gpio_put(YELLOW_LED_PIN, 0);
+                sleep_ms(200);
             }
         }
     }
